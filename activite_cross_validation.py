@@ -12,6 +12,7 @@ plt.imshow(data_matrix,vmin=0,vmax=n_colors-1)
 
 # TODO: Implement the following cross-validation function!
 def cross_validation(data, n_splits=5, shuffle=True, random_state=None):
+     
     """
     Generator function that performs k-fold cross-validation.
     
@@ -25,8 +26,9 @@ def cross_validation(data, n_splits=5, shuffle=True, random_state=None):
         Whether to shuffle the data before splitting
     random_state : int, optional
         Random seed for reproducibility
+    """
     
-    Yields:
+    """Yields:
     -------
     train_data : array
         Training data for this fold
@@ -39,15 +41,68 @@ def cross_validation(data, n_splits=5, shuffle=True, random_state=None):
     NumPy Indexing: https://numpy.org/doc/stable/user/basics.indexing.html
     NumPy Random: https://www.w3schools.com/python/numpy/numpy_random.asp
     """
+
     
-    # Your code here
-            
+    # combien de lignes j'ai?
+    nb_lignes = data.shape[0]
+    
+    # je crée juste une liste de numéros [0, 1, 2, 3, ...]
+    indices = np.arange(nb_lignes)
+    
+    # je mélange si on me demande
+    if shuffle:
+        if random_state:
+            np.random.seed(random_state)
+        np.random.shuffle(indices)
+    
+    # maintenant pour chaque fold
     for k in range(n_splits):
+        
+        # je calcule où ça commence et où ça finit
+        taille = nb_lignes // n_splits
+        debut = k * taille
+        fin = debut + taille
+        
+        # dernier fold prend tout ce qui reste
+        if k == n_splits - 1:
+            fin = nb_lignes
+        
+        # les indices pour validation
+        valid_idx = indices[debut:fin]
+        
+        # les indices pour train (tout sauf valid)
+        train_idx = np.concatenate([indices[:debut], indices[fin:]])
+        
+        # je récupère les données
+        train_data = data[train_idx]
+        valid_data = data[valid_idx]
+        
+        yield train_data, valid_data
+            
+    """for k in range(n_splits):
         
         # Your code here
         
-        yield train_data, valid_data
+        yield train_data, valid_data"""
+    # Your code here
+    n_samples = data.shape[0]
+    fold_size = n_samples // n_splits # Dans notre cas, fold_size = 20
 
+    for k in range(n_splits):
+        
+        valid_data = data[k * fold_size : (k+1) * fold_size]
+        
+        # Valid set:
+        # k = 0: data[0 * fold_size : 1 * fold_size] : taille de la tranche: fold_size
+        # k = 1: data[1 * fold_size : 2 * fold_size] : taille de la tranche: fold_size
+        # k = 2: data[2 * fold_size : 3 * fold_size] : taille de la tranche: fold_size
+        # k = 3: data[3 * fold_size : 4 * fold_size] : taille de la tranche: fold_size
+        # k = 4: data[4 * fold_size : 5 * fold_size] : taille de la tranche: fold_size
+        
+        # Train set:
+        # k = 0: data[fold_size:]
+        
+        yield train_data, valid_data
 
 # Visualize your results
 n_splits = 5
