@@ -43,11 +43,11 @@ def cross_validation(data, n_splits=5, shuffle=True, random_state=None):
     """
 
     
-    # combien de lignes j'ai?
+    """"Je délimite la taille de mon set en entier"""
     nb_lignes = data.shape[0]
     
-    # je crée juste une liste de numéros [0, 1, 2, 3, ...]
-    indices = np.arange(nb_lignes)
+    """Ma liste de numéro"""
+    indices = np.arange(nb_lignes) """n_samples = len(data)"""
     
     # je mélange si on me demande
     if shuffle:
